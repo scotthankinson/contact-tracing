@@ -23,7 +23,7 @@ provider:
   environment:
     IS_SERVERLESS: ${file(deploy.env.yml):IS_SERVERLESS}
     LIFECYCLE: ${file(deploy.env.yml):LIFECYCLE}
-    SEND_TO: ${file(deploy.env.yml):SEND_FROM} 
+    SEND_TO: ${file(deploy.env.yml):SEND_TO} 
     SEND_FROM: ${file(deploy.env.yml):SEND_FROM}
     SEND_EMAIL: ${file(deploy.env.yml):SEND_EMAIL}
     MAPPING_FILE: ${file(deploy.env.yml):MAPPING_FILE}

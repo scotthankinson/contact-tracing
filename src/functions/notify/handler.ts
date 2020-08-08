@@ -4,10 +4,10 @@ const XLSX = require("xlsx");
 
 // Handler for Lambda event
 function notify(event: any, _context: any, callback: any): void {
+  // Only accept requests from school-tracing.com
   if (!event.headers.origin || event.headers.origin.indexOf("school-tracing.com") === -1)
     return callback(null, createResponseObject(400, { "message": "[400] Error!  invalid origin!" }));
 
-  console.log(JSON.stringify(event));
   let request = tryParseJSON(event.body);
 
   if (request === false) {
