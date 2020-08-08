@@ -4,6 +4,10 @@ const XLSX = require("xlsx");
 
 // Handler for Lambda event
 function notify(event: any, _context: any, callback: any): void {
+  if (!event.headers.origin || event.headers.origin.indexOf("school-tracing.com") === -1)
+    return callback(null, createResponseObject(400, { "message": "[400] Error!  invalid origin!" }));
+
+  console.log(JSON.stringify(event));
   let request = tryParseJSON(event.body);
 
   if (request === false) {
@@ -14,36 +18,23 @@ function notify(event: any, _context: any, callback: any): void {
   if (typeof request.email === "undefined")
     return callback(null, createResponseObject(400, { "message": "[400] Error!  email is required!" }));
 
-  const workbook = XLSX.readFile("./mappings/" + process.env.MAPPING_FILE);
-  const sheetNameList = workbook.SheetNames;
-  const mappingData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
-  let associations = [];
-  for (let entry of mappingData) {
-    if ("Email" in entry) {
-      delete entry.Course;
-      entry.Courses = [];
-      associations.push(entry);
-    } else {
-      if (entry.Course !== "Course")
-        associations[associations.length - 1]["Courses"].push(entry);
-    }
-  }
-  let match = null;
+  const associations = loadAssociationsFromExcel();
+
   console.log("Match courses for " + request.email);
+  let match = null;
   for (let entry of associations) {
     if (entry.Email === request.email) {
       match = entry;
       break;
     }
   }
-  if (match === null){
+  if (match === null) {
     console.log("Error!  email " + request.email + " did not match any mappings!");
     return callback(null, createResponseObject(400, { "message": "[400] Error!  email did not match any mappings!" }));
   }
 
   let notifyTeacherList = new Set();
   let notifyStudentList = new Set();
-
   for (let oneCourse of match.Courses) {
     const students = getStudentsForCourse(associations, oneCourse);
     for (let oneStudent of students) notifyStudentList.add(oneStudent);
@@ -89,6 +80,23 @@ function notify(event: any, _context: any, callback: any): void {
   }
 }
 
+function loadAssociationsFromExcel() {
+  const workbook = XLSX.readFile("./mappings/" + process.env.MAPPING_FILE);
+  const sheetNameList = workbook.SheetNames;
+  const mappingData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
+  let associations = [];
+  for (let entry of mappingData) {
+    if ("Email" in entry) {
+      delete entry.Course;
+      entry.Courses = [];
+      associations.push(entry);
+    } else {
+      if (entry.Course !== "Course")
+        associations[associations.length - 1]["Courses"].push(entry);
+    }
+  }
+  return associations;
+}
 
 function getStudentsForCourse(associations, course): string[] {
   const stringMatch = JSON.stringify(course);
@@ -126,7 +134,7 @@ function tryParseJSON(jsonString: string): any {
           return o;
       }
   }
-  catch (e) { 
+  catch (e) {
     console.log(e);
   }
 

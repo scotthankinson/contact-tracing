@@ -3,9 +3,7 @@
     <title>Atlanta Girls School - Contact Tracing Assistant</title>
     <link rel="shortcut icon" href="favicon.png">
     <meta name="google-signin-scope" content="profile email">
-    <!-- google public login -->
-    <!--<meta name="google-signin-client_id" content="755269475572-5sbrcbcuhhfi2svnklqfa0vrq46kf152.apps.googleusercontent.com">-->
-    <!-- ags login -->
+    <!-- ags gsuite login -->
     <meta name="google-signin-client_id" content="301320066253-porntd3vf91fgmc67jq6getqs9420a86.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     
@@ -52,7 +50,6 @@
       function onSignIn(googleUser) {
         // Useful data for your client-side scripts:
         var profile = googleUser.getBasicProfile();
-        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
         console.log('Full Name: ' + profile.getName());
         console.log("Email: " + profile.getEmail());
 

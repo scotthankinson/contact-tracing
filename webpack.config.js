@@ -4,6 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: slsw.lib.webpack.isLocal ? 'production' : 'production',
@@ -14,7 +15,13 @@ module.exports = {
       banner: 'require("source-map-support").install();',
       raw: true,
       entryOnly: false
-    })],
+    }),
+    new CopyPlugin({
+      patterns: [
+        'mappings/**'
+      ]
+    })
+  ],
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     plugins: [new TsconfigPathsPlugin({ configFile: path.join(__dirname, "tsconfig.json") }),]

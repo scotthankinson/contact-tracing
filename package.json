@@ -37,6 +37,7 @@
         "@types/sinon": "^7.0.13",
         "app-module-path": "^2.2.0",
         "chai": "^4.2.0",
+        "copy-webpack-plugin": "^6.0.3",
         "mocha": "^6.1.4",
         "mocha-junit-reporter": "^1.23.0",
         "mocha-multi-reporters": "^1.1.7",
