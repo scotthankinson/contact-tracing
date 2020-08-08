@@ -1,0 +1,20 @@
+{
+    "reporterEnabled": "spec, tap, json, mocha-junit-reporter, mocha-sonar-reporter",
+    "mochaJunitReporterReporterOptions": {
+        "mochaFile": "testreports/tests-results-jenkins.xml"
+    },
+    "spec": "-",
+    "tap": "testreports/tap.text",
+    "json": "testreports/report.json",
+    "doc": "testreports/report.html",
+    "markdown": "testreports/report.md",
+    "xunit": "testreports/report-xunit.xml",
+    "mocha-sonar-reporter": {
+        "stdout": "testreports/report-sonar-stdout.xml",
+        "options": {
+            "outputfile": "testreports/tests-results-sonar.xml",
+            "classname": "Test",
+            "testdir": "test"
+        }
+    }
+}

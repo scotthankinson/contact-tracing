@@ -1,0 +1,55 @@
+service:
+  name: contact-tracing
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  
+custom:
+  webpack:
+    includeModules:
+      forceInclude:
+        - source-map-support
+      forceExclude:
+        - aws-sdk
+  
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512 # optional, default is 1024
+  role: ${file(deploy.env.yml):IAM_ROLE} # Lambda role -- needs SES
+  timeout: 30 
+  stage: dev
+  environment:
+    IS_SERVERLESS: ${file(deploy.env.yml):IS_SERVERLESS}
+    LIFECYCLE: ${file(deploy.env.yml):LIFECYCLE}
+    SEND_TO: ${file(deploy.env.yml):SEND_FROM} 
+    SEND_FROM: ${file(deploy.env.yml):SEND_FROM}
+    NOTIFY_LIST: ${file(deploy.env.yml):SEND_TO}
+    MAPPING_FILE: ${file(deploy.env.yml):MAPPING_FILE}
+    
+package:
+  exclude:
+    - test/**
+    - .git/**
+    - coverage/**
+    - src/**
+    - node_modules/@types/**
+    - node_modules/serverless
+    - node_modules/serverless-offline
+    - testresults
+    - build/**/*.js.map
+    - build/test/**
+    - tsconfig.json
+    - .env
+    - .gitignore
+
+functions:
+
+  notify:
+    handler: src/functions/notify/handler.notify
+    events:
+      - http:
+          path: /notify
+          method: POST
+          cors: false

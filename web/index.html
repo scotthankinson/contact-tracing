@@ -1,0 +1,79 @@
+<html lang="en">
+  <head>
+    <title>Atlanta Girls School - Contact Tracing Assistant</title>
+    <link rel="shortcut icon" href="favicon.png">
+    <meta name="google-signin-scope" content="profile email">
+    <!-- google public login -->
+    <!--<meta name="google-signin-client_id" content="755269475572-5sbrcbcuhhfi2svnklqfa0vrq46kf152.apps.googleusercontent.com">-->
+    <!-- ags login -->
+    <meta name="google-signin-client_id" content="301320066253-porntd3vf91fgmc67jq6getqs9420a86.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="navy-bg copy-block-right well-match">    
+    <div id="submit" class="homepage-main" style="display: none">
+        <p>
+            <h3>What is Contact Tracing?</h3>
+            Contact tracing is the process of quickly identifying, assessing, and managing people who have been exposed to a disease to prevent additional transmission. When used with other public health measures like widespread testing and social distancing, contact tracing is a key strategy for preventing further spread of COVID-19.
+        </p>
+        <p></p>
+            <h3>Have you tested positive?</h3>
+            If you have tested positive for Covid-19, you should self-quarantine and acknowledge your result below.
+            AGS staff then begin contact tracing by warning exposed individuals (contacts) of their potential exposure as rapidly and sensitively as possible.
+            To protect your privacy, contacts are only informed that they may have been exposed to a person with the infection. They are not told the identity of the person who may have exposed them.
+            Contacts are provided with education, information, and support to understand their risk, what they should do to separate themselves from others who are not exposed, monitor themselves for illness, and the possibility that they could spread the infection to others even if they themselves do not feel ill.
+            <br/><br/>
+            Contacts are encouraged to stay home and maintain social distance from others (at least 6 feet) until 14 days after their last exposure, in case they also become ill.
+        </p>
+        <p>
+            <h3>Is my notification anonymous?</h3>
+            Yes!  We will use your login information only to cross-reference which students and faculty may have been in close contact with you, but we will NOT capture the source of the report.  All affected contacts will be notified of the occurrence of a positive test.  Please take this very seriously and ONLY report in the event of a positive test.
+        </p>
+        <p>
+            <div class="btn btn-yellow btn-lg aligncenter" style="max-width: 300px; cursor: pointer;" onclick="onSubmit()">I have received a postitive test</div>
+        </p>
+        <input id="email" style="display: none"/>
+    </div>
+    <div id="signin">
+        <div class="homepage-main">
+            <h3>Please sign in with your AGS GSuite Email</h3>
+        </div>
+        <div class="g-signin2" data-prompt="select_account consent" data-onsuccess="onSignIn" data-theme="dark"></div>
+    </div>
+    <div id="thanks" class="homepage-main" style="display: none">
+        <p>
+            <h3>Thank you for sharing your positive test.</h3>
+            AGS Administrators have been notified and will reach out to all affected contacts soon.
+        </p>
+    </div>
+    <script>
+      
+      function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        console.log('Full Name: ' + profile.getName());
+        console.log("Email: " + profile.getEmail());
+
+        document.getElementById("submit").style.display = "";
+        document.getElementById("signin").style.display = "none";
+        document.getElementById("email").value = profile.getEmail();
+
+      }
+      function onSubmit() {
+        document.getElementById("submit").style.display = "none";
+        document.getElementById("thanks").style.display = "";
+        
+        console.log("Submitting " + document.getElementById("email").value + " notification via email!")
+        var email = document.getElementById("email").value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://api.school-tracing.com/notify", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            email: email
+        }));
+      }
+    </script>
+  </body>
+</html>
